@@ -1,8 +1,7 @@
-package hamza.maharmeh.model;
+package hamza.maharmeh.model.inbound;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import tools.jackson.databind.ObjectMapper;
 
 public class ChatMessage extends BaseMessage {
     @JsonProperty

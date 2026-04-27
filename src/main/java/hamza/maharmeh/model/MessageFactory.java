@@ -1,11 +1,9 @@
 package hamza.maharmeh.model;
 
-import tools.jackson.databind.DatabindException;
+import hamza.maharmeh.model.inbound.BaseMessage;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-
-import java.util.List;
 
 public class MessageFactory {
 
