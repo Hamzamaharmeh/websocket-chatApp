@@ -19,4 +19,9 @@ public class ExceptionHandler extends ChannelInboundHandlerAdapter {
             System.out.println("Exception caught " + cause);
         }
     }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        RegisteredUsers.removeChannel(ctx.channel());
+    }
 }
