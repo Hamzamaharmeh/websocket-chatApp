@@ -1,8 +1,9 @@
 package hamza.maharmeh;
 
-import hamza.maharmeh.model.BaseMessage;
-import hamza.maharmeh.model.ChatMessage;
-import hamza.maharmeh.model.IdMessage;
+import hamza.maharmeh.exceptions.NoSuchMessageException;
+import hamza.maharmeh.model.inbound.BaseMessage;
+import hamza.maharmeh.model.inbound.ChatMessage;
+import hamza.maharmeh.model.inbound.IdMessage;
 import hamza.maharmeh.model.MessageFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,9 +36,16 @@ public class MessageFactoryTest {
             "{\"randomKey\": 123}",
     })
     public void failTest(String input) {
-        assertThrows(MessageFactory.NoSuchMessageException.class,() -> MessageFactory.getMessage(input) );
+        assertThrows(NoSuchMessageException.class,() -> MessageFactory.getMessage(input) );
     }
 
+    @Test
+    @DisplayName("Verify message to json conversion, Given a message object, return valid json")
+    public void toJson() {
+        IdMessage message = new IdMessage("hamza","123");
+        String result = MessageFactory.toJson(message);
+        assertEquals(new IdMessage("hamza","123"), MessageFactory.getMessage(result));
+    }
     private static Stream<Arguments> provideMessageAndClassType() {
         return Stream.of(
                 Arguments.of(
@@ -45,8 +53,8 @@ public class MessageFactoryTest {
                         new ChatMessage("hamza","yassen","Hello")
                 ),
                 Arguments.of(
-                        "{\"sender\": \"hamza\",\"type\": \"id\"}",
-                        new IdMessage("hamza")
+                        "{\"sender\": \"hamza\",\"password\": \"123\",\"type\": \"id\"}",
+                        new IdMessage("hamza","123")
                 )
         );
     }

@@ -1,7 +1,6 @@
 package hamza.maharmeh.handlers;
 
-import hamza.maharmeh.model.BaseMessage;
-import hamza.maharmeh.model.ChatMessage;
+import hamza.maharmeh.model.inbound.ChatMessage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

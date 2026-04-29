@@ -4,15 +4,16 @@ import hamza.maharmeh.exceptions.NoSuchUserException;
 import hamza.maharmeh.exceptions.UserNotIdentifiedException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
-public class ExcptionHandler extends ChannelInboundHandlerAdapter {
+public class ExceptionHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if(cause instanceof UserNotIdentifiedException) {
-//            ctx.writeAndFlush()
-            System.out.println("Use nto identified");
+            ctx.writeAndFlush(new TextWebSocketFrame("User not identified"));
         }else if(cause instanceof NoSuchUserException e) {
+            ctx.writeAndFlush(new TextWebSocketFrame("User " + e.user() + " not found"));
             System.out.println("No such user");
         }else {
             System.out.println("Exception caught " + cause);

@@ -1,27 +1,19 @@
 package hamza.maharmeh;
 
-import hamza.maharmeh.handlers.ChatMessageHandler;
-import hamza.maharmeh.handlers.ExcptionHandler;
-import hamza.maharmeh.handlers.IdMessageHandler;
-import hamza.maharmeh.model.BaseMessage;
-import hamza.maharmeh.model.Message;
-import hamza.maharmeh.model.MessageFactory;
+import hamza.maharmeh.database.dao.UserDao;
+import hamza.maharmeh.handlers.*;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.cors.CorsConfig;
 import io.netty.handler.codec.http.cors.CorsConfigBuilder;
 import io.netty.handler.codec.http.cors.CorsHandler;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.util.AttributeKey;
-import tools.jackson.databind.ObjectMapper;
 
-public class WebSocketServerInitilizerTemp extends ChannelInitializer<Channel> {
+public class WebSocketServerInitilizer extends ChannelInitializer<Channel> {
 
     @Override
     protected void initChannel(Channel ch) throws Exception {
@@ -34,24 +26,14 @@ public class WebSocketServerInitilizerTemp extends ChannelInitializer<Channel> {
                 new HttpServerCodec(),
                 new HttpObjectAggregator(65536),
                 new CorsHandler(corsConfig),
+                new HttpRequestHandler("/websocket",new UserDao()),
                 new WebSocketServerProtocolHandler("/websocket"),
                 new TextFrameHandler(),
-                new IdMessageHandler(),
                 new ChatMessageHandler(),
-                new ExcptionHandler()
+                new ExceptionHandler()
         );
     }
 
-    public static final class TextFrameHandler
-            extends SimpleChannelInboundHandler<TextWebSocketFrame> {
-
-        @Override
-        public void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
-            BaseMessage message = MessageFactory.getMessage(msg.text());
-//            msg.release();
-            ctx.fireChannelRead(message);
-        }
-    }
 
 
 }

@@ -4,19 +4,11 @@ import java.util.UUID;
 
 public class User {
     private final String username;
-    private final String id;
     private final String password;
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.id = UUID.randomUUID().toString();
-    }
-
-    public User(String username, String password, String id) {
-        this.username = username;
-        this.password = password;
-        this.id = id;
     }
 
     public String username() {
@@ -25,7 +17,16 @@ public class User {
     public String password() {
         return password;
     }
-    public String id() {
-        return id;
+
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(o == this) return true;
+        if(!(o instanceof User u)) return false;
+        return this.username.equals(u.username) && this.password.equals(u.password);
+    }
+
+    public static String encodePassword(String password) {
+        //TODO should encode the input using the encoding algorithm
+        return password;
     }
 }

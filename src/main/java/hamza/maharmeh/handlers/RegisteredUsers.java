@@ -21,6 +21,6 @@ public class RegisteredUsers {
                 return ch;
             }
         }
-        throw new NoSuchUserException();
+        throw new NoSuchUserException(user);
     }
 }

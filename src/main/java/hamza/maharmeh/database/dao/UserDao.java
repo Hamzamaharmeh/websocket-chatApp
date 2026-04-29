@@ -21,44 +21,61 @@ public class UserDao implements Dao<User,String>{
     public void save(User user) {
         try(Connection conn = dataSource.getConnection()) {
             String sql = """
-                        INSERT INTO users(id,username,password) VALUES(?,?,?) 
+                        INSERT INTO users(username,password) VALUES(?,?) 
                     """;
             try(PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1,user.id());
-                statement.setString(2,user.username());
-                statement.setString(3,user.password());
+                statement.setString(1,user.username());
+                statement.setString(2,user.password());
                 statement.executeUpdate();
             }
         }catch(SQLException e) {
-
+            System.out.println(e.getMessage());
         }
     }
-    public void delete(String id) {
+    public boolean doesExist(String username) {
         try(Connection conn = dataSource.getConnection()) {
             String sql = """
-                        DELETE FROM users WHERE id=? 
-                    """;
-            try(PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, id);
-                statement.executeUpdate();
-            }
-        }catch(SQLException e) {
-
-        }
-    }
-    public User get(String id) {
-        try(Connection conn = dataSource.getConnection()) {
-            String sql = """
-                       SELECT username,password from users where id=?
+                            select * from users where username=? 
                         """;
-            try(Statement stmt = conn.createStatement()) {
-                ResultSet set = stmt.executeQuery(sql);
+            try(PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, username);
+                ResultSet set = statement.executeQuery();
+                return set.next();
+            }
+        }catch(SQLException e) {
 
-                if(!set.next()) throw new NoSuchUserException(id);
+        }
+        return false;
+    }
+    public boolean doesExist(User user) {
+        return this.doesExist(user.username());
+    }
+    public void delete(String username) {
+        try(Connection conn = dataSource.getConnection()) {
+            String sql = """
+                        DELETE FROM users WHERE username=? 
+                    """;
+            try(PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, username);
+                statement.executeUpdate();
+            }
+        }catch(SQLException e) {
 
-                String username = set.getString("username");
+        }
+    }
+    public User get(String username) {
+        try(Connection conn = dataSource.getConnection()) {
+            String sql = """
+                       SELECT password from users where username=?
+                        """;
+            try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, username);
+                ResultSet set = stmt.executeQuery();
+
+                if(!set.next()) throw new NoSuchUserException(username);
+
                 String password = set.getString("password");
-                return new User(username,password,id);
+                return new User(username,password);
             }
         }catch(SQLException e) {
 
@@ -69,17 +86,16 @@ public class UserDao implements Dao<User,String>{
     public List<User> getAll() {
         try(Connection conn = dataSource.getConnection()) {
             String sql = """
-                        Select id,username,password from users
+                        Select username,password from users
                     """;
 
-            try(Statement stmt = conn.createStatement()) {
+            try(PreparedStatement stmt = conn.prepareStatement(sql)) {
                 List<User> usersList = new ArrayList<>();
-                ResultSet rs = stmt.executeQuery(sql);
+                ResultSet rs = stmt.executeQuery();
                 while(rs.next()) {
-                    String id = rs.getString("id");
                     String username = rs.getString("username");
                     String password = rs.getString("password");
-                    usersList.add(new User(username,password,id));
+                    usersList.add(new User(username,password));
                 }
                 return usersList;
             }

@@ -2,10 +2,8 @@ package hamza.maharmeh;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 /**
@@ -27,7 +25,7 @@ public class App {
             ServerBootstrap b = new ServerBootstrap();
             b.group(group)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(new WebSocketServerInitilizerTemp());
+                    .childHandler(new WebSocketServerInitilizer());
             ChannelFuture f = b.bind(port).sync();
             f.channel().closeFuture().sync();
         }finally {
